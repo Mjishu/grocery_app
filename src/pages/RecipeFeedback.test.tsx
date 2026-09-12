@@ -23,6 +23,17 @@ describe("recipe feedback", () => {
     expect(localStorage.getItem("grocery-feedback")).toContain('"rating":5');
   });
 
+  it("adds a saved recipe without discarding earlier saves", async () => {
+    localStorage.setItem("grocery-saved-recipes", JSON.stringify(["lemon-pasta"]));
+    const user = userEvent.setup();
+    renderRecipe();
+
+    await user.click(screen.getByRole("button", { name: "Save recipe" }));
+
+    expect(localStorage.getItem("grocery-saved-recipes")).toContain("lemon-pasta");
+    expect(localStorage.getItem("grocery-saved-recipes")).toContain("taco-bowls");
+  });
+
   it("lets anyone record a factual or safety concern locally", async () => {
     const user = userEvent.setup();
     render(<MemoryRouter initialEntries={["/report/taco-bowls"]}><Routes><Route path="/report/:recipeId" element={<ReportPage />} /></Routes></MemoryRouter>);

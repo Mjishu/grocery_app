@@ -2,6 +2,8 @@ import { Download, RotateCcw, Save, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { UserProfile } from "../types";
+import { recipes } from "../data/recipes";
+import { readStringList } from "../domain/localStorage";
 
 type Props = {
   profile: UserProfile;
@@ -16,6 +18,7 @@ const cuisineOptions = ["Mexican", "Italian", "Mediterranean", "Asian-inspired",
 export function ProfilePage({ profile, onSave, onExport, onDelete }: Props) {
   const [draft, setDraft] = useState(profile);
   const [saved, setSaved] = useState(false);
+  const savedRecipes = readStringList("grocery-saved-recipes").map((id) => recipes.find((recipe) => recipe.id === id)).filter((recipe) => recipe !== undefined);
 
   const toggleListValue = (field: "equipment" | "cuisines", value: string) => {
     const values = draft[field];
@@ -46,6 +49,7 @@ export function ProfilePage({ profile, onSave, onExport, onDelete }: Props) {
           {saved && <span className="save-status" role="status">Preferences saved</span>}
         </section>
         <aside className="profile-sidebar">
+          <section className="settings-card saved-recipes"><h2>Saved recipes</h2>{savedRecipes.length ? <ul>{savedRecipes.map((recipe) => <li key={recipe.id}><Link to={`/recipes/${recipe.id}`}>{recipe.title}</Link><small>{recipe.time} min · {recipe.cost}</small></li>)}</ul> : <p>No saved recipes yet.</p>}</section>
           <section className="settings-card"><h2>Known allergens</h2>{profile.allergens.length ? <ul>{profile.allergens.map((allergen) => <li key={allergen}>{allergen}</li>)}</ul> : <p>None known</p>}<small>Always verify manufacturer labels and cross-contact risk.</small></section>
           <section className="settings-card"><h2>What we're learning</h2>{draft.inferredPreferences.length ? <ul>{draft.inferredPreferences.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No inferred preferences yet.</p>}<button className="text-action" onClick={() => setDraft({ ...draft, inferredPreferences: [] })}><RotateCcw /> Reset inferred preferences</button></section>
           <section className="settings-card data-controls"><h2>Your local data</h2><button onClick={onExport}><Download /> Export my data</button><button className="danger" onClick={onDelete}><Trash2 /> Delete local profile</button></section>

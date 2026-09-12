@@ -4,6 +4,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { RecipeArt } from "../components/RecipeArt";
 import { recipes } from "../data/recipes";
 import { getMealCalories } from "../domain/cart";
+import { readStringList, toggleStringListItem } from "../domain/localStorage";
 
 type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
 
@@ -12,7 +13,7 @@ export function RecipePage({ cartIds, onAdd }: Props) {
   const [servings, setServings] = useState(4);
   const [cooked, setCooked] = useState(false);
   const [rating, setRating] = useState(0);
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(() => readStringList("grocery-saved-recipes").includes(recipeId ?? ""));
   const [units, setUnits] = useState<"us" | "metric">("us");
   const recipe = recipes.find((item) => item.id === recipeId);
   if (!recipe) return <Navigate to="/" replace />;
@@ -29,9 +30,8 @@ export function RecipePage({ cartIds, onAdd }: Props) {
   };
 
   const toggleSaved = () => {
-    const nextSaved = !saved;
-    localStorage.setItem("grocery-saved-recipes", JSON.stringify(nextSaved ? [recipe.id] : []));
-    setSaved(nextSaved);
+    const savedIds = toggleStringListItem("grocery-saved-recipes", recipe.id);
+    setSaved(savedIds.includes(recipe.id));
   };
 
   return (

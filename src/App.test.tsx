@@ -129,6 +129,14 @@ describe("profile preferences", () => {
     expect(localStorage.getItem("grocery-profile")).toContain("Air fryer");
     expect(localStorage.getItem("grocery-profile")).toContain('"servings":2');
   });
+
+  it("shows recipes saved on this device", () => {
+    localStorage.setItem("grocery-saved-recipes", JSON.stringify(["lemon-pasta"]));
+    renderApp("/profile");
+
+    expect(screen.getByRole("heading", { name: "Saved recipes" })).toBeVisible();
+    expect(screen.getByRole("link", { name: "Bright lemon pasta" })).toHaveAttribute("href", "/recipes/lemon-pasta");
+  });
 });
 
 describe("grocery sharing", () => {
