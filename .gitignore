@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Vite output
+dist/
+
+# Local environment
+.env
+.env.local
+.env.*.local
+
+# TypeScript and tooling
+*.tsbuildinfo
+.vite/
+
+# This project is Vite-only. Ignore any stale Next.js artifacts restored by sync tools.
+.next/
+next-env.d.ts
+next.config.*
+
+# Editor and OS files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
