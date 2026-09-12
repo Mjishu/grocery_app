@@ -17,5 +17,8 @@ describe("recipe nutrition and measurements", () => {
 
     expect(screen.getByText("454 g")).toBeVisible();
     expect(screen.queryByText("1 lb")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Decrease servings" }));
+    expect(screen.getByText("341 g")).toBeVisible();
   });
 });

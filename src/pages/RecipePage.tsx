@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { RecipeArt } from "../components/RecipeArt";
 import { recipes } from "../data/recipes";
-import { getMealCalories } from "../domain/cart";
+import { getMealCalories, scaleAmount } from "../domain/cart";
 import { readStringList, toggleStringListItem } from "../domain/localStorage";
 
 type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
@@ -54,7 +54,7 @@ export function RecipePage({ cartIds, onAdd }: Props) {
         <div className="recipe-detail-grid">
           <section>
             <div className="ingredient-title"><div><p className="eyebrow">What you'll need</p><h2>Ingredients</h2><div className="unit-toggle" aria-label="Measurement units"><button className={units === "us" ? "selected" : ""} onClick={() => setUnits("us")}>US</button><button className={units === "metric" ? "selected" : ""} onClick={() => setUnits("metric")}>Metric</button></div></div><div className="servings"><button onClick={() => setServings((current) => Math.max(1, current - 1))} aria-label="Decrease servings"><Minus /></button><span>{servings} servings</span><button onClick={() => setServings((current) => current + 1)} aria-label="Increase servings"><Plus /></button></div></div>
-            <ul className="ingredient-list">{recipe.ingredients.map((item) => <li key={item.id}><i /><strong>{item.name}</strong><span className="ingredient-values"><span>{units === "metric" ? item.metricAmount : item.amount}</span><small>{Math.round(item.calories * servings / 4).toLocaleString()} cal</small></span></li>)}</ul>
+            <ul className="ingredient-list">{recipe.ingredients.map((item) => <li key={item.id}><i /><strong>{item.name}</strong><span className="ingredient-values"><span>{scaleAmount(units === "metric" ? item.metricAmount : item.amount, servings)}</span><small>{Math.round(item.calories * servings / 4).toLocaleString()} cal</small></span></li>)}</ul>
           </section>
           <aside className="nutrition-card"><p className="eyebrow">USDA-derived estimates</p><h3>Meal total</h3><strong className="meal-calories">{mealCalories.toLocaleString()} <small>cal</small></strong><div className="nutrition-breakdown"><span><strong>{caloriesPerServing}</strong> calories</span><span><strong>{recipe.nutrition.protein} g protein</strong></span><span><strong>{recipe.nutrition.carbohydrates} g carbohydrates</strong></span><span><strong>{recipe.nutrition.fat} g fat</strong></span><span><strong>{servings}</strong> servings</span></div><small>Per-serving estimates from mock reviewed catalog values. Verify labels and substitutions.</small></aside>
         </div>

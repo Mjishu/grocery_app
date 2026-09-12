@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { recipes } from "../data/recipes";
 import type { CartItem, Recipe } from "../types";
-import { buildGroceryList, getCartCalories, getMealCalories } from "./cart";
+import { buildGroceryList, getCartCalories, getMealCalories, scaleAmount } from "./cart";
 
 describe("cart calculations", () => {
   it("scales recipe and cart calories from the four-serving source amounts", () => {
@@ -30,8 +30,16 @@ describe("cart calculations", () => {
     const lines = buildGroceryList(cart, [...recipes, duplicateRecipe]);
     const beans = lines.find((line) => line.ingredientId === "beans")!;
 
-    expect(beans.amount).toBe("2 × 1 can");
+    expect(beans.amount).toBe("2 cans");
     expect(beans.calories).toBe(700);
     expect(beans.sources).toEqual(["Smoky taco bowls", "Second taco dinner"]);
+  });
+
+  it("scales displayed ingredient quantities with servings", () => {
+    expect(scaleAmount("1 lb", 2)).toBe("0.5 lb");
+    expect(scaleAmount("1/3 cup", 6)).toBe("0.5 cup");
+
+    const lines = buildGroceryList([{ recipeId: "taco-bowls", servings: 2 }], recipes);
+    expect(lines.find((line) => line.ingredientId === "chicken")?.amount).toBe("0.5 lb");
   });
 });
