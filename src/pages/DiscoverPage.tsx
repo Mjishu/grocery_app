@@ -1,4 +1,5 @@
 import { ArrowRight, Search, SlidersHorizontal, Sparkles } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeArt } from "../components/RecipeArt";
@@ -8,6 +9,28 @@ type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
 const filters = ["Under 30 min", "One pan", "Vegetarian", "High protein"];
 
 export function DiscoverPage({ cartIds, onAdd }: Props) {
+  const [query, setQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState("");
+  const isFiltering = query.trim().length > 0 || activeFilter.length > 0;
+  const visibleRecipes = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    return recipes.filter((recipe) => {
+      const searchableText = [recipe.title, recipe.tagline, ...recipe.tags].join(" ").toLowerCase();
+      const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
+      const matchesFilter = !activeFilter
+        || (activeFilter === "Under 30 min" && recipe.time < 30)
+        || (activeFilter === "One pan" && recipe.tags.includes("One pan"))
+        || (activeFilter === "Vegetarian" && recipe.tags.includes("Vegetarian"))
+        || (activeFilter === "High protein" && recipe.tags.includes("High protein"));
+      return matchesQuery && matchesFilter;
+    });
+  }, [activeFilter, query]);
+
+  const clearFilters = () => {
+    setQuery("");
+    setActiveFilter("");
+  };
+
   return (
     <main className="wrap discover-page">
       <section className="hero-copy">
@@ -21,15 +44,20 @@ export function DiscoverPage({ cartIds, onAdd }: Props) {
 
       <label className="search-field" id="search">
         <Search />
-        <input aria-label="Search recipes" placeholder="Try “cheap, cozy, and no chopping”" />
+        <input aria-label="Search recipes" placeholder="Try “cheap, cozy, and no chopping”" value={query} onChange={(event) => setQuery(event.target.value)} />
         <kbd>⌘ K</kbd>
       </label>
 
       <div className="filter-row">
         <button aria-label="All filters"><SlidersHorizontal size={17} /></button>
-        {filters.map((filter, index) => <button className={index === 0 ? "selected" : ""} key={filter}>{filter}</button>)}
+        {filters.map((filter) => <button className={activeFilter === filter ? "selected" : ""} onClick={() => setActiveFilter((current) => current === filter ? "" : filter)} key={filter}>{filter}</button>)}
+        {isFiltering && <button className="clear-filter" onClick={clearFilters}>Clear filters</button>}
       </div>
 
+      {isFiltering ? <section className="content-section search-results" aria-live="polite">
+        <div className="section-title"><div><p className="eyebrow accent">Search results</p><h2>{visibleRecipes.length ? `${visibleRecipes.length} recipes found` : "No exact matches"}</h2></div></div>
+        {visibleRecipes.length ? <div className="recipe-grid lower-grid">{visibleRecipes.map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} added={cartIds.includes(recipe.id)} onAdd={onAdd} />)}</div> : <div className="no-results"><p>Try a different phrase or remove a filter.</p><button onClick={clearFilters}>Clear filters</button></div>}
+      </section> : <>
       <section className="content-section" id="collections">
         <div className="section-title">
           <div><p className="eyebrow accent">Start here</p><h2>Easy wins</h2></div>
@@ -51,6 +79,7 @@ export function DiscoverPage({ cartIds, onAdd }: Props) {
           {recipes.slice(2).map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} added={cartIds.includes(recipe.id)} onAdd={onAdd} />)}
         </div>
       </section>
+      </>}
     </main>
   );
 }
