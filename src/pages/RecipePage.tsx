@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { RecipeArt } from "../components/RecipeArt";
 import { recipes } from "../data/recipes";
+import { getMealCalories } from "../domain/cart";
 
 type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
 
@@ -13,7 +14,7 @@ export function RecipePage({ cartIds, onAdd }: Props) {
   if (!recipe) return <Navigate to="/" replace />;
   const added = cartIds.includes(recipe.id);
   const baseCalories = recipe.ingredients.reduce((total, ingredient) => total + ingredient.calories, 0);
-  const mealCalories = Math.round(baseCalories * servings / 4);
+  const mealCalories = getMealCalories(recipe, servings);
   const caloriesPerServing = Math.round(baseCalories / 4);
 
   return (

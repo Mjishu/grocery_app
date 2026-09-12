@@ -4,8 +4,8 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it } from "vitest";
 import App from "./App";
 
-function renderApp() {
-  return render(<MemoryRouter><App /></MemoryRouter>);
+function renderApp(path = "/") {
+  return render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>);
 }
 
 describe("appearance", () => {
@@ -31,5 +31,34 @@ describe("appearance", () => {
 
     await waitFor(() => expect(localStorage.getItem("grocery-theme")).toBe("dark"));
     expect(document.documentElement).toHaveAttribute("data-theme", "dark");
+  });
+});
+
+describe("active grocery plan", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("restores recipes after the app is reopened", async () => {
+    const user = userEvent.setup();
+    const firstSession = renderApp();
+
+    await user.click(screen.getByRole("button", { name: "Add Smoky taco bowls" }));
+    expect(localStorage.getItem("grocery-cart")).toContain("taco-bowls");
+
+    firstSession.unmount();
+    renderApp("/groceries");
+    expect(screen.getByText("Smoky taco bowls")).toBeVisible();
+    expect(screen.getByText("2,053 cal")).toBeVisible();
+  });
+
+  it("remembers an item the user usually has in the pantry", async () => {
+    localStorage.setItem("grocery-cart", JSON.stringify([{ recipeId: "taco-bowls", servings: 4 }]));
+    const user = userEvent.setup();
+    renderApp("/groceries");
+
+    await user.click(screen.getByRole("button", { name: "I usually have Avocado" }));
+
+    expect(screen.queryByText("Avocado")).not.toBeInTheDocument();
+    expect(localStorage.getItem("grocery-pantry")).toContain("avocado");
+    expect(screen.getByText("1 pantry item hidden")).toBeVisible();
   });
 });
