@@ -85,3 +85,25 @@ describe("dietary safety gate", () => {
     expect(localStorage.getItem("grocery-profile")).toContain("dietaryAcknowledged");
   });
 });
+
+describe("profile preferences", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem("grocery-profile", JSON.stringify({ dietaryAcknowledged: true, allergens: [], servings: 4, equipment: [] }));
+  });
+
+  it("lets the user edit and persist cooking preferences", async () => {
+    const user = userEvent.setup();
+    renderApp("/profile");
+
+    await user.clear(screen.getByLabelText("Default servings"));
+    await user.type(screen.getByLabelText("Default servings"), "2");
+    await user.click(screen.getByLabelText("Air fryer"));
+    await user.selectOptions(screen.getByLabelText("Maximum cooking time"), "30");
+    await user.click(screen.getByRole("button", { name: "Save preferences" }));
+
+    expect(screen.getByText("Preferences saved")).toBeVisible();
+    expect(localStorage.getItem("grocery-profile")).toContain("Air fryer");
+    expect(localStorage.getItem("grocery-profile")).toContain('"servings":2');
+  });
+});

@@ -29,7 +29,7 @@ export function AppShell({ cartCount, theme, onThemeChange }: Props) {
         <NavLink to="/" end><Compass /><span>Discover</span></NavLink>
         <a href="/#search"><Search /><span>Search</span></a>
         <NavLink to="/groceries"><i><ListChecks />{cartCount > 0 && <b>{cartCount}</b>}</i><span>My plan</span></NavLink>
-        <a href="#profile"><UserRound /><span>You</span></a>
+        <NavLink to="/profile"><UserRound /><span>You</span></NavLink>
       </nav>
     </div>
   );

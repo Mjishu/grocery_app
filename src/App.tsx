@@ -5,6 +5,7 @@ import { DietaryGate } from "./components/DietaryGate";
 import { CookPage } from "./pages/CookPage";
 import { DiscoverPage } from "./pages/DiscoverPage";
 import { GroceryPage } from "./pages/GroceryPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { RecipePage } from "./pages/RecipePage";
 import type { CartItem, UserProfile } from "./types";
 
@@ -38,11 +39,21 @@ function readStoredPantry(): string[] {
 function readStoredProfile(): UserProfile {
   try {
     const stored = JSON.parse(localStorage.getItem("grocery-profile") ?? "null");
-    if (stored?.dietaryAcknowledged === true && Array.isArray(stored.allergens)) return stored;
+    if (stored?.dietaryAcknowledged === true && Array.isArray(stored.allergens)) return {
+      dietaryAcknowledged: true,
+      allergens: stored.allergens,
+      servings: Number(stored.servings) || 4,
+      equipment: Array.isArray(stored.equipment) ? stored.equipment : [],
+      maxTime: stored.maxTime ?? "30",
+      budget: stored.budget ?? "flexible",
+      cuisines: Array.isArray(stored.cuisines) ? stored.cuisines : [],
+      dislikedFoods: stored.dislikedFoods ?? "",
+      inferredPreferences: Array.isArray(stored.inferredPreferences) ? stored.inferredPreferences : [],
+    };
   } catch {
     // A malformed local demo profile is treated as incomplete.
   }
-  return { dietaryAcknowledged: false, allergens: [] };
+  return { dietaryAcknowledged: false, allergens: [], servings: 4, equipment: [], maxTime: "30", budget: "flexible", cuisines: [], dislikedFoods: "", inferredPreferences: [] };
 }
 
 export default function App() {
@@ -88,7 +99,7 @@ export default function App() {
   };
 
   const confirmDietaryProfile = (allergens: string[]) => {
-    setProfile({ dietaryAcknowledged: true, allergens });
+    setProfile((current) => ({ ...current, dietaryAcknowledged: true, allergens }));
     if (pendingRecipeId) setCart((current) => current.some((item) => item.recipeId === pendingRecipeId) ? current : [...current, { recipeId: pendingRecipeId, servings: 4 }]);
     setPendingRecipeId(null);
   };
@@ -109,12 +120,32 @@ export default function App() {
     setPantry((current) => current.includes(ingredientId) ? current : [...current, ingredientId]);
   };
 
+  const exportLocalData = () => {
+    const payload = JSON.stringify({ profile, cart, pantry, checked }, null, 2);
+    const url = URL.createObjectURL(new Blob([payload], { type: "application/json" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "good-food-data.json";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const deleteLocalData = () => {
+    if (!window.confirm("Delete the local demo profile, grocery plan, pantry, and preferences?")) return;
+    localStorage.clear();
+    setCart([]);
+    setChecked([]);
+    setPantry([]);
+    setProfile(readStoredProfile());
+  };
+
   return (<>
     <Routes>
       <Route element={<AppShell cartCount={cart.length} theme={theme} onThemeChange={() => setTheme((current) => current === "bright" ? "dark" : "bright")} />}>
         <Route index element={<DiscoverPage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="recipes/:recipeId" element={<RecipePage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="groceries" element={<GroceryPage cart={cart} checked={checked} pantry={pantry} onCheck={toggleChecked} onServings={changeServings} onRemove={removeRecipe} onPantry={addPantryItem} onRestorePantry={() => setPantry([])} />} />
+        <Route path="profile" element={<ProfilePage profile={profile} onSave={setProfile} onExport={exportLocalData} onDelete={deleteLocalData} />} />
       </Route>
       <Route path="cook/:recipeId" element={<CookPage />} />
     </Routes>

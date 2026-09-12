@@ -28,4 +28,11 @@ export type CartItem = { recipeId: string; servings: number };
 export type UserProfile = {
   dietaryAcknowledged: boolean;
   allergens: string[];
+  servings: number;
+  equipment: string[];
+  maxTime: string;
+  budget: string;
+  cuisines: string[];
+  dislikedFoods: string;
+  inferredPreferences: string[];
 };
