@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, Minus, Plus, Share2, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, Copy, Minus, Plus, Printer, Send, Share2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { RecipeArt } from "../components/RecipeArt";
@@ -21,6 +21,8 @@ const categories: Category[] = ["Produce", "Protein", "Dairy", "Pantry"];
 
 export function GroceryPage({ cart, checked, pantry, onCheck, onServings, onRemove, onPantry, onRestorePantry }: Props) {
   const [removed, setRemoved] = useState<string[]>([]);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [shareStatus, setShareStatus] = useState("");
   const selectedRecipes = cart.map((item) => ({ ...item, recipe: recipes.find((recipe) => recipe.id === item.recipeId)! }));
   const groceries = buildGroceryList(cart, recipes);
   const visibleGroceries = groceries.filter((item) => !pantry.includes(item.ingredientId) && !removed.includes(item.key));
@@ -28,10 +30,26 @@ export function GroceryPage({ cart, checked, pantry, onCheck, onServings, onRemo
   const visibleCheckedCount = visibleGroceries.filter((item) => checked.includes(item.key)).length;
   const cartCalories = getCartCalories(cart, recipes);
 
+  const formatShareList = () => categories.map((category) => {
+    const items = visibleGroceries.filter((item) => item.category === category);
+    if (!items.length) return "";
+    return `${category}\n${items.map((item) => `- ${item.name} — ${item.amount}`).join("\n")}`;
+  }).filter(Boolean).join("\n\n");
+
+  const copyList = async () => {
+    await navigator.clipboard.writeText(formatShareList());
+    setShareStatus("List copied");
+  };
+
+  const shareList = async () => {
+    if (!navigator.share) return;
+    await navigator.share({ title: "Grocery list", text: formatShareList() });
+  };
+
   return (
     <main className="wrap grocery-page">
       <Link className="plain-back" to="/"><ArrowLeft /> Back to recipes</Link>
-      <header className="grocery-heading"><div><p className="eyebrow">Your week, sorted</p><h1>Grocery plan</h1><p>{cart.length} recipes · {visibleGroceries.length} items · <strong>{cartCalories.toLocaleString()} estimated calories</strong></p>{hiddenCount > 0 && <button className="restore-pantry" onClick={() => { setRemoved([]); onRestorePantry(); }}><span>{hiddenCount} pantry {hiddenCount === 1 ? "item" : "items"} hidden</span><b>Restore</b></button>}</div><button><Share2 /> Share list</button></header>
+      <header className="grocery-heading"><div><p className="eyebrow">Your week, sorted</p><h1>Grocery plan</h1><p>{cart.length} recipes · {visibleGroceries.length} items · <strong>{cartCalories.toLocaleString()} estimated calories</strong></p>{hiddenCount > 0 && <button className="restore-pantry" onClick={() => { setRemoved([]); onRestorePantry(); }}><span>{hiddenCount} pantry {hiddenCount === 1 ? "item" : "items"} hidden</span><b>Restore</b></button>}</div><div className="share-wrap"><button onClick={() => setShareOpen((current) => !current)}><Share2 /> Share list</button>{shareOpen && <div className="share-menu"><button onClick={copyList}><Copy /> Copy grocery list</button><button onClick={() => window.print()}><Printer /> Print list</button>{"share" in navigator && <button onClick={shareList}><Send /> Share with device</button>}{shareStatus && <span role="status">{shareStatus}</span>}<small>Private synchronized links require the future backend.</small></div>}</div></header>
 
       {cart.length === 0 ? <section className="empty-state"><span>🧺</span><h2>Your basket is ready for ideas.</h2><p>Add a recipe and its ingredients will organize themselves here.</p><Link className="button primary" to="/">Find something good</Link></section> :
         <div className="grocery-layout">

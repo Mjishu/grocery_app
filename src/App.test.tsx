@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 
 function renderApp(path = "/") {
@@ -105,5 +105,28 @@ describe("profile preferences", () => {
     expect(screen.getByText("Preferences saved")).toBeVisible();
     expect(localStorage.getItem("grocery-profile")).toContain("Air fryer");
     expect(localStorage.getItem("grocery-profile")).toContain('"servings":2');
+  });
+});
+
+describe("grocery sharing", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem("grocery-profile", JSON.stringify({ dietaryAcknowledged: true, allergens: [] }));
+    localStorage.setItem("grocery-cart", JSON.stringify([{ recipeId: "taco-bowls", servings: 4 }]));
+  });
+
+  it("copies a categorized grocery list without exposing recipe details", async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    renderApp("/groceries");
+
+    await user.click(screen.getByRole("button", { name: "Share list" }));
+    await user.click(screen.getByRole("button", { name: "Copy grocery list" }));
+
+    expect(writeText).toHaveBeenCalledOnce();
+    expect(writeText.mock.calls[0][0]).toContain("Produce");
+    expect(writeText.mock.calls[0][0]).toContain("Avocado — 1");
+    expect(screen.getByText("List copied")).toBeVisible();
   });
 });

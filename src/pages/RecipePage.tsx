@@ -1,4 +1,4 @@
-import { ArrowLeft, Check, Clock3, CookingPot, Heart, Minus, Plus, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, Clock3, CookingPot, Flag, Heart, Minus, Plus, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { RecipeArt } from "../components/RecipeArt";
@@ -10,6 +10,9 @@ type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
 export function RecipePage({ cartIds, onAdd }: Props) {
   const { recipeId } = useParams();
   const [servings, setServings] = useState(4);
+  const [cooked, setCooked] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [saved, setSaved] = useState(false);
   const recipe = recipes.find((item) => item.id === recipeId);
   if (!recipe) return <Navigate to="/" replace />;
   const added = cartIds.includes(recipe.id);
@@ -17,12 +20,25 @@ export function RecipePage({ cartIds, onAdd }: Props) {
   const mealCalories = getMealCalories(recipe, servings);
   const caloriesPerServing = Math.round(baseCalories / 4);
 
+  const rateRecipe = (value: number) => {
+    const feedback = { recipeId: recipe.id, cooked: true, rating: value, recordedAt: new Date().toISOString() };
+    localStorage.setItem("grocery-feedback", JSON.stringify(feedback));
+    setCooked(true);
+    setRating(value);
+  };
+
+  const toggleSaved = () => {
+    const nextSaved = !saved;
+    localStorage.setItem("grocery-saved-recipes", JSON.stringify(nextSaved ? [recipe.id] : []));
+    setSaved(nextSaved);
+  };
+
   return (
     <main className="recipe-page">
       <section className="recipe-hero">
         <RecipeArt recipe={recipe} />
         <Link className="floating-control back" to="/"><ArrowLeft /> Back</Link>
-        <button className="floating-control favorite" aria-label="Save recipe"><Heart /></button>
+        <button className="floating-control favorite" aria-label={saved ? "Remove saved recipe" : "Save recipe"} onClick={toggleSaved}><Heart fill={saved ? "currentColor" : "none"} /></button>
       </section>
       <div className="wrap recipe-content">
         <div className="recipe-heading">
@@ -43,6 +59,7 @@ export function RecipePage({ cartIds, onAdd }: Props) {
         </div>
         <section className="directions"><p className="eyebrow">Nice and easy</p><h2>How it comes together</h2>{recipe.steps.map((step, index) => <div key={step}><span>{index + 1}</span><p>{step}</p></div>)}</section>
         {recipe.safety && <aside className="safety-note"><Check /><div><strong>Good to know</strong><p>{recipe.safety}</p></div></aside>}
+        <section className="recipe-feedback"><div><p className="eyebrow">After you cook</p><h2>How did it go?</h2><p>Your feedback helps tune future recommendations on this device.</p></div>{!cooked ? <button className="button secondary" onClick={() => setCooked(true)}>Mark as cooked</button> : <div className="rating-controls" role="group" aria-label="Rate this recipe">{[1, 2, 3, 4, 5].map((value) => <button className={rating >= value ? "selected" : ""} key={value} onClick={() => rateRecipe(value)} aria-label={`Rate ${value} stars`}>★</button>)}</div>}{rating > 0 && <span role="status">Thanks for rating this recipe.</span>}<Link className="report-link" to={`/report/${recipe.id}`}><Flag /> Report a factual or safety concern</Link></section>
       </div>
       <div className="recipe-actions">
         <Link className="button secondary" to={`/cook/${recipe.id}`}><CookingPot /> Start cooking</Link>
