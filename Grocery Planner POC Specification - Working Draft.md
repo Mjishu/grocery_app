@@ -1,22 +1,24 @@
 # Grocery Planner POC Specification
 
+test change!
+
 > [!warning] Working checkpoint
 > This document records the decisions made through September 11, 2026. The design grill is paused, not complete. Items marked **Open** or **Follow-on** are not approved implementation requirements for the core build unless explicitly stated.
 
 ## Document control
 
-| Field | Decision |
-|---|---|
-| Working name | Recipe Curator; final name pending |
-| Owner | Josh |
-| Version | 0.3 working draft |
-| Updated | September 11, 2026 |
-| Geography | United States for the POC |
-| Builder | Josh, working alone |
-| Available capacity | Variable by week |
-| Operating ceiling | Less than $100/month |
-| Launch deadline | No externally fixed date; milestone-based planning |
-| Build status | Frontend POC implemented as a React 19, TypeScript, and Vite static application; backend work has not started |
+| Field              | Decision                                                                                                      |
+| ------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Working name       | Recipe Curator; final name pending                                                                            |
+| Owner              | Josh                                                                                                          |
+| Version            | 0.3 working draft                                                                                             |
+| Updated            | September 11, 2026                                                                                            |
+| Geography          | United States for the POC                                                                                     |
+| Builder            | Josh, working alone                                                                                           |
+| Available capacity | Variable by week                                                                                              |
+| Operating ceiling  | Less than $100/month                                                                                          |
+| Launch deadline    | No externally fixed date; milestone-based planning                                                            |
+| Build status       | Frontend POC implemented as a React 19, TypeScript, and Vite static application; backend work has not started |
 
 ## 1. Product definition
 
@@ -491,22 +493,22 @@ Choose one public support platform. Do not load a third-party widget site-wide.
 
 ## 18. Proposed technical architecture
 
-| Area | Decision |
-|---|---|
-| Client | Mobile-first responsive React website; no native app or installable PWA in the core POC |
-| Frontend framework | React with TypeScript, built with Vite |
-| Current application shape | Frontend-only single-page application with reusable feature components and in-memory POC data |
-| Frontend hosting | Static frontend files hosted in Azure; select the exact Azure static-hosting service before deployment |
-| Backend | Deferred. A separately deployed Azure-hosted API may be added after the frontend POC validates the product flow |
-| Database | Deferred with the backend. Azure SQL remains a candidate, not a current frontend dependency |
-| Identity | Entra External ID first; Auth0 escape path |
-| AI | Provider-neutral adapter, initially Azure OpenAI |
-| Analytics | Application Insights and Search Console |
-| Images | Optimized application assets and/or Azure Blob Storage as volume requires |
-| Payments | External Ko-fi or Buy Me a Coffee link; no card handling in Grocery Planner |
-| Grocery integration | Provider-neutral adapters; Instacart handoff is first candidate |
-| Source control | Git |
-| Environments | Local, one shared nonproduction environment, production |
+| Area                      | Decision                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Client                    | Mobile-first responsive React website; no native app or installable PWA in the core POC                         |
+| Frontend framework        | React with TypeScript, built with Vite                                                                          |
+| Current application shape | Frontend-only single-page application with reusable feature components and in-memory POC data                   |
+| Frontend hosting          | Static frontend files hosted in Azure; select the exact Azure static-hosting service before deployment          |
+| Backend                   | Deferred. A separately deployed Azure-hosted API may be added after the frontend POC validates the product flow |
+| Database                  | Deferred with the backend. Azure SQL remains a candidate, not a current frontend dependency                     |
+| Identity                  | Entra External ID first; Auth0 escape path                                                                      |
+| AI                        | Provider-neutral adapter, initially Azure OpenAI                                                                |
+| Analytics                 | Application Insights and Search Console                                                                         |
+| Images                    | Optimized application assets and/or Azure Blob Storage as volume requires                                       |
+| Payments                  | External Ko-fi or Buy Me a Coffee link; no card handling in Grocery Planner                                     |
+| Grocery integration       | Provider-neutral adapters; Instacart handoff is first candidate                                                 |
+| Source control            | Git                                                                                                             |
+| Environments              | Local, one shared nonproduction environment, production                                                         |
 
 ### Modules
 
@@ -579,14 +581,14 @@ External support and retailer records remain with their providers. Required fina
 
 ### Retention
 
-| Data | Retention |
-|---|---|
+| Data                        | Retention                                                                   |
+| --------------------------- | --------------------------------------------------------------------------- |
 | Pseudonymous product events | 13 months, then delete event-level data and retain de-identified aggregates |
-| Application diagnostics | 30 days |
-| Security/admin audit events | 90 days |
-| Ordinary support tickets | 12 months after closure |
-| Safety incidents | Longer only for an active investigation or legal requirement |
-| Shared links | 30 days unless revoked earlier |
+| Application diagnostics     | 30 days                                                                     |
+| Security/admin audit events | 90 days                                                                     |
+| Ordinary support tickets    | 12 months after closure                                                     |
+| Safety incidents            | Longer only for an active investigation or legal requirement                |
+| Shared links                | 30 days unless revoked earlier                                              |
 
 ### Backup
 
@@ -673,22 +675,22 @@ Measure grocery-list completion separately from Instacart handoff. Interview pra
 
 ## 25. Open gates and known risks
 
-| Priority | Item | Status |
-|---|---|---|
-| Critical | Final product name and domain | Separate naming/domain session required before indexing |
-| Critical | Support platform | Ko-fi versus Buy Me a Coffee test required |
-| Critical | Legal review | Required before public accounts and support payments |
-| Critical | Recipe production | 40–60 recipes, sole approval, and no mandatory test cook create schedule/quality risk |
-| High | Phone collection | POC stores optional unused personal data without verification or defined feature |
-| High | SQL cost | Free/auto-pause design can exceed budget if public/user traffic keeps SQL online |
-| High | Backup | Free local backup has no regional disaster recovery |
-| High | Identity | Entra implementation must prove Google/passwordless flow and anonymous-action continuation; Auth0 is fallback |
-| High | Retail APIs | Full product/aisle/order experience depends on approved provider capabilities not broadly available today |
-| High | Cooking timers | Background/lock-screen alarms cannot be guaranteed on an ordinary mobile website |
-| High | Allergy posture | Unknown recipes may display warnings; no allergy-friendly guarantee may be made |
-| Medium | AI model | Exact model, quota, caching, evaluation, and failure metrics remain implementation choices |
-| Medium | Calendar forecast | No fixed deadline; milestones control delivery |
-| Medium | Admin workflow | Import command is initial solution; dashboard trigger remains undefined |
+| Priority | Item                          | Status                                                                                                        |
+| -------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Critical | Final product name and domain | Separate naming/domain session required before indexing                                                       |
+| Critical | Support platform              | Ko-fi versus Buy Me a Coffee test required                                                                    |
+| Critical | Legal review                  | Required before public accounts and support payments                                                          |
+| Critical | Recipe production             | 40–60 recipes, sole approval, and no mandatory test cook create schedule/quality risk                         |
+| High     | Phone collection              | POC stores optional unused personal data without verification or defined feature                              |
+| High     | SQL cost                      | Free/auto-pause design can exceed budget if public/user traffic keeps SQL online                              |
+| High     | Backup                        | Free local backup has no regional disaster recovery                                                           |
+| High     | Identity                      | Entra implementation must prove Google/passwordless flow and anonymous-action continuation; Auth0 is fallback |
+| High     | Retail APIs                   | Full product/aisle/order experience depends on approved provider capabilities not broadly available today     |
+| High     | Cooking timers                | Background/lock-screen alarms cannot be guaranteed on an ordinary mobile website                              |
+| High     | Allergy posture               | Unknown recipes may display warnings; no allergy-friendly guarantee may be made                               |
+| Medium   | AI model                      | Exact model, quota, caching, evaluation, and failure metrics remain implementation choices                    |
+| Medium   | Calendar forecast             | No fixed deadline; milestones control delivery                                                                |
+| Medium   | Admin workflow                | Import command is initial solution; dashboard trigger remains undefined                                       |
 
 ## 26. Remaining grill frontier
 
