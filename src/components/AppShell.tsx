@@ -1,4 +1,4 @@
-import { Compass, ListChecks, LogIn, Moon, Search, ShoppingBasket, Sun, UserRound } from "lucide-react";
+import { BookOpen, Compass, ListChecks, LogIn, Moon, Search, ShoppingBasket, Sun, UserRound } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 
 type Props = { cartCount: number; theme: "bright" | "dark"; onThemeChange: () => void };
@@ -29,6 +29,7 @@ export function AppShell({ cartCount, theme, onThemeChange }: Props) {
       <nav className="mobile-nav" aria-label="Mobile navigation">
         <NavLink to="/" end><Compass /><span>Discover</span></NavLink>
         <a href="/#search"><Search /><span>Search</span></a>
+        <NavLink to="/collections/beginner-dinners"><BookOpen /><span>Collections</span></NavLink>
         <NavLink to="/groceries"><i><ListChecks />{cartCount > 0 && <b>{cartCount}</b>}</i><span>My plan</span></NavLink>
         <NavLink to="/profile"><UserRound /><span>You</span></NavLink>
       </nav>

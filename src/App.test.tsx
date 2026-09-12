@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -31,6 +31,21 @@ describe("appearance", () => {
 
     await waitFor(() => expect(localStorage.getItem("grocery-theme")).toBe("dark"));
     expect(document.documentElement).toHaveAttribute("data-theme", "dark");
+  });
+});
+
+describe("mobile navigation", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("keeps every primary destination reachable when desktop navigation is hidden", () => {
+    renderApp();
+    const navigation = screen.getByRole("navigation", { name: "Mobile navigation" });
+
+    expect(within(navigation).getByRole("link", { name: "Discover" })).toHaveAttribute("href", "/");
+    expect(within(navigation).getByRole("link", { name: "Search" })).toHaveAttribute("href", "/#search");
+    expect(within(navigation).getByRole("link", { name: "Collections" })).toHaveAttribute("href", "/collections/beginner-dinners");
+    expect(within(navigation).getByRole("link", { name: "My plan" })).toHaveAttribute("href", "/groceries");
+    expect(within(navigation).getByRole("link", { name: "You" })).toHaveAttribute("href", "/profile");
   });
 });
 
