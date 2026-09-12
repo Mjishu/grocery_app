@@ -1,5 +1,6 @@
 import { Download, RotateCcw, Save, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import type { UserProfile } from "../types";
 
 type Props = {
@@ -48,6 +49,7 @@ export function ProfilePage({ profile, onSave, onExport, onDelete }: Props) {
           <section className="settings-card"><h2>Known allergens</h2>{profile.allergens.length ? <ul>{profile.allergens.map((allergen) => <li key={allergen}>{allergen}</li>)}</ul> : <p>None known</p>}<small>Always verify manufacturer labels and cross-contact risk.</small></section>
           <section className="settings-card"><h2>What we're learning</h2>{draft.inferredPreferences.length ? <ul>{draft.inferredPreferences.map((item) => <li key={item}>{item}</li>)}</ul> : <p>No inferred preferences yet.</p>}<button className="text-action" onClick={() => setDraft({ ...draft, inferredPreferences: [] })}><RotateCcw /> Reset inferred preferences</button></section>
           <section className="settings-card data-controls"><h2>Your local data</h2><button onClick={onExport}><Download /> Export my data</button><button className="danger" onClick={onDelete}><Trash2 /> Delete local profile</button></section>
+          <section className="settings-card"><h2>Need a hand?</h2><p>Report a recipe issue, safety concern, or account question.</p><Link className="text-action" to="/support">Contact support</Link></section>
         </aside>
       </div>
     </main>
