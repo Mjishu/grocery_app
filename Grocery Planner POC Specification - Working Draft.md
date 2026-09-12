@@ -16,7 +16,7 @@
 | Available capacity | Variable by week |
 | Operating ceiling | Less than $100/month |
 | Launch deadline | No externally fixed date; milestone-based planning |
-| Build status | Greenfield; the workspace contained no application code or Git repository at the time of planning |
+| Build status | Frontend POC implemented as a React 19, TypeScript, and Vite static application; backend work has not started |
 
 ## 1. Product definition
 
@@ -525,9 +525,30 @@ Choose one public support platform. Do not load a third-party widget site-wide.
 
 ### Current frontend implementation boundary
 
-The current implementation is a clean React and TypeScript frontend only. It must not include server routes, database access, identity-provider integration, secrets, or provider SDKs. POC data and mutations remain local and in memory behind simple frontend interfaces so a future Azure API can replace them without rewriting page components.
+The current implementation is a clean React 19 and TypeScript frontend built with Vite. It contains no Next.js runtime or generated `.next` artifacts. It must not include server routes, database access, identity-provider integration, secrets, or provider SDKs. POC data and mutations remain local or in browser storage behind simple frontend interfaces so a future Azure API can replace them without rewriting page components.
 
-SEO rendering, recipe publication, authentication, persistence, retailer integration, and server-side caching are backend or deployment decisions for a later milestone. They remain product requirements but are not requirements for the current frontend POC.
+Implemented in the frontend POC:
+
+- Responsive discovery, search, quick filters, a ten-recipe mock catalog, recipe details, and an editorial collection route.
+- Dark mode by default with a persistent bright-mode option.
+- A local age-check and authentication handoff screen with no identity-provider calls.
+- Dietary acknowledgement, editable allergen preferences, deterministic allergen exclusions, and visible recipe allergen disclosures.
+- Per-ingredient calories, per-serving calorie/protein/carbohydrate/fat estimates, meal/cart calorie totals, US/metric display, and serving-aware quantities.
+- A persistent active grocery plan with compatible ingredient consolidation, recipe attribution, checked items, pantry defaults, serving changes, removal, and local archive/clear behavior.
+- Guided cooking steps, multiple deadline-based timers, visibility reconciliation, read-aloud, optional wake lock, and explicit background-alarm limitations.
+- Local saved recipes, cooked/rating feedback, factual/safety reports, support requests, preferences, data export/deletion, copy/print/native sharing, ZIP confirmation, generic retailer fallback, and a client-side 404 page.
+- Automated tests for the primary frontend behaviors plus TypeScript and production-build verification.
+
+Deferred because they require a backend, provider approval, infrastructure, or deployment configuration:
+
+- Real authentication, accounts, cross-device persistence, server-side export/deletion, email, and retention enforcement.
+- SQL-backed recipe publication/import, approval audit records, cache invalidation, and live USDA editorial mappings.
+- Private synchronized and revocable share links with expiry and multi-shopper updates.
+- Reverse geocoding, nearby retailer discovery, live product/price/availability data, and retailer-hosted cart handoff or checkout.
+- Azure OpenAI recommendations, Application Insights, alerts, external support payments, and notification delivery.
+- Server-rendered SEO, canonical metadata, Recipe JSON-LD, sitemap generation, and hosting-level 404 rewrites.
+
+The Vite production output is suitable for static hosting, including Azure Static Web Apps or an equivalent static-file host. Azure hosting files should be added only when the target service and routing configuration are selected.
 
 ## 19. Cost controls
 
