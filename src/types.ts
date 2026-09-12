@@ -24,3 +24,8 @@ export type Recipe = {
 };
 
 export type CartItem = { recipeId: string; servings: number };
+
+export type UserProfile = {
+  dietaryAcknowledged: boolean;
+  allergens: string[];
+};

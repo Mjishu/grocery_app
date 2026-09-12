@@ -35,7 +35,10 @@ describe("appearance", () => {
 });
 
 describe("active grocery plan", () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    localStorage.setItem("grocery-profile", JSON.stringify({ dietaryAcknowledged: true, allergens: [] }));
+  });
 
   it("restores recipes after the app is reopened", async () => {
     const user = userEvent.setup();
@@ -60,5 +63,25 @@ describe("active grocery plan", () => {
     expect(screen.queryByText("Avocado")).not.toBeInTheDocument();
     expect(localStorage.getItem("grocery-pantry")).toContain("avocado");
     expect(screen.getByText("1 pantry item hidden")).toBeVisible();
+  });
+});
+
+describe("dietary safety gate", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("preserves the attempted recipe add until dietary restrictions are acknowledged", async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(screen.getByRole("button", { name: "Add Smoky taco bowls" }));
+    expect(screen.getByRole("dialog", { name: "Before you add your first recipe" })).toBeVisible();
+    expect(screen.getByLabelText("None known")).not.toBeChecked();
+
+    await user.click(screen.getByLabelText("None known"));
+    await user.click(screen.getByRole("button", { name: "Save and add recipe" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Grocery plan with 1 recipes" })).toBeVisible();
+    expect(localStorage.getItem("grocery-profile")).toContain("dietaryAcknowledged");
   });
 });

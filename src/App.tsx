@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
+import { DietaryGate } from "./components/DietaryGate";
 import { CookPage } from "./pages/CookPage";
 import { DiscoverPage } from "./pages/DiscoverPage";
 import { GroceryPage } from "./pages/GroceryPage";
 import { RecipePage } from "./pages/RecipePage";
-import type { CartItem } from "./types";
+import type { CartItem, UserProfile } from "./types";
 
 function readStoredCart(): CartItem[] {
   try {
@@ -34,6 +35,16 @@ function readStoredPantry(): string[] {
   }
 }
 
+function readStoredProfile(): UserProfile {
+  try {
+    const stored = JSON.parse(localStorage.getItem("grocery-profile") ?? "null");
+    if (stored?.dietaryAcknowledged === true && Array.isArray(stored.allergens)) return stored;
+  } catch {
+    // A malformed local demo profile is treated as incomplete.
+  }
+  return { dietaryAcknowledged: false, allergens: [] };
+}
+
 export default function App() {
   const [theme, setTheme] = useState<"bright" | "dark">(() => {
     const savedTheme = localStorage.getItem("grocery-theme");
@@ -43,6 +54,8 @@ export default function App() {
   const [cart, setCart] = useState<CartItem[]>(readStoredCart);
   const [checked, setChecked] = useState<string[]>(readStoredChecks);
   const [pantry, setPantry] = useState<string[]>(readStoredPantry);
+  const [profile, setProfile] = useState<UserProfile>(readStoredProfile);
+  const [pendingRecipeId, setPendingRecipeId] = useState<string | null>(null);
   const cartIds = useMemo(() => cart.map((item) => item.recipeId), [cart]);
 
   useEffect(() => {
@@ -62,8 +75,22 @@ export default function App() {
     localStorage.setItem("grocery-pantry", JSON.stringify(pantry));
   }, [pantry]);
 
+  useEffect(() => {
+    localStorage.setItem("grocery-profile", JSON.stringify(profile));
+  }, [profile]);
+
   const addRecipe = (recipeId: string) => {
+    if (!profile.dietaryAcknowledged) {
+      setPendingRecipeId(recipeId);
+      return;
+    }
     setCart((current) => current.some((item) => item.recipeId === recipeId) ? current : [...current, { recipeId, servings: 4 }]);
+  };
+
+  const confirmDietaryProfile = (allergens: string[]) => {
+    setProfile({ dietaryAcknowledged: true, allergens });
+    if (pendingRecipeId) setCart((current) => current.some((item) => item.recipeId === pendingRecipeId) ? current : [...current, { recipeId: pendingRecipeId, servings: 4 }]);
+    setPendingRecipeId(null);
   };
 
   const toggleChecked = (itemId: string) => {
@@ -82,7 +109,7 @@ export default function App() {
     setPantry((current) => current.includes(ingredientId) ? current : [...current, ingredientId]);
   };
 
-  return (
+  return (<>
     <Routes>
       <Route element={<AppShell cartCount={cart.length} theme={theme} onThemeChange={() => setTheme((current) => current === "bright" ? "dark" : "bright")} />}>
         <Route index element={<DiscoverPage cartIds={cartIds} onAdd={addRecipe} />} />
@@ -91,5 +118,6 @@ export default function App() {
       </Route>
       <Route path="cook/:recipeId" element={<CookPage />} />
     </Routes>
-  );
+    {pendingRecipeId && <DietaryGate onCancel={() => setPendingRecipeId(null)} onConfirm={confirmDietaryProfile} />}
+  </>);
 }
