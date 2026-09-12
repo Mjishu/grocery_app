@@ -122,11 +122,13 @@ describe("profile preferences", () => {
     await user.clear(screen.getByLabelText("Default servings"));
     await user.type(screen.getByLabelText("Default servings"), "2");
     await user.click(screen.getByLabelText("Air fryer"));
+    await user.click(screen.getByLabelText("Milk"));
     await user.selectOptions(screen.getByLabelText("Maximum cooking time"), "30");
     await user.click(screen.getByRole("button", { name: "Save preferences" }));
 
     expect(screen.getByText("Preferences saved")).toBeVisible();
     expect(localStorage.getItem("grocery-profile")).toContain("Air fryer");
+    expect(localStorage.getItem("grocery-profile")).toContain("Milk");
     expect(localStorage.getItem("grocery-profile")).toContain('"servings":2');
   });
 
