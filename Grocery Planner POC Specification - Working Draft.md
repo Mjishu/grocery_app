@@ -1,7 +1,5 @@
 # Grocery Planner POC Specification
 
-test change!
-
 > [!warning] Working checkpoint
 > This document records the decisions made through September 11, 2026. The design grill is paused, not complete. Items marked **Open** or **Follow-on** are not approved implementation requirements for the core build unless explicitly stated.
 
