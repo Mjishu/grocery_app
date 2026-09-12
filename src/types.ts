@@ -4,6 +4,7 @@ export type Ingredient = {
   id: string;
   name: string;
   amount: string;
+  metricAmount: string;
   category: Category;
   calories: number;
 };
@@ -21,6 +22,7 @@ export type Recipe = {
   ingredients: Ingredient[];
   steps: string[];
   safety?: string;
+  nutrition: { protein: number; carbohydrates: number; fat: number };
 };
 
 export type CartItem = { recipeId: string; servings: number };

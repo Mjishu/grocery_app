@@ -13,6 +13,7 @@ export function RecipePage({ cartIds, onAdd }: Props) {
   const [cooked, setCooked] = useState(false);
   const [rating, setRating] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [units, setUnits] = useState<"us" | "metric">("us");
   const recipe = recipes.find((item) => item.id === recipeId);
   if (!recipe) return <Navigate to="/" replace />;
   const added = cartIds.includes(recipe.id);
@@ -52,10 +53,10 @@ export function RecipePage({ cartIds, onAdd }: Props) {
         </div>
         <div className="recipe-detail-grid">
           <section>
-            <div className="ingredient-title"><div><p className="eyebrow">What you'll need</p><h2>Ingredients</h2></div><div className="servings"><button onClick={() => setServings((current) => Math.max(1, current - 1))} aria-label="Decrease servings"><Minus /></button><span>{servings} servings</span><button onClick={() => setServings((current) => current + 1)} aria-label="Increase servings"><Plus /></button></div></div>
-            <ul className="ingredient-list">{recipe.ingredients.map((item) => <li key={item.id}><i /><strong>{item.name}</strong><span className="ingredient-values"><span>{item.amount}</span><small>{Math.round(item.calories * servings / 4).toLocaleString()} cal</small></span></li>)}</ul>
+            <div className="ingredient-title"><div><p className="eyebrow">What you'll need</p><h2>Ingredients</h2><div className="unit-toggle" aria-label="Measurement units"><button className={units === "us" ? "selected" : ""} onClick={() => setUnits("us")}>US</button><button className={units === "metric" ? "selected" : ""} onClick={() => setUnits("metric")}>Metric</button></div></div><div className="servings"><button onClick={() => setServings((current) => Math.max(1, current - 1))} aria-label="Decrease servings"><Minus /></button><span>{servings} servings</span><button onClick={() => setServings((current) => current + 1)} aria-label="Increase servings"><Plus /></button></div></div>
+            <ul className="ingredient-list">{recipe.ingredients.map((item) => <li key={item.id}><i /><strong>{item.name}</strong><span className="ingredient-values"><span>{units === "metric" ? item.metricAmount : item.amount}</span><small>{Math.round(item.calories * servings / 4).toLocaleString()} cal</small></span></li>)}</ul>
           </section>
-          <aside className="nutrition-card"><p className="eyebrow">Calorie summary</p><h3>Meal total</h3><strong className="meal-calories">{mealCalories.toLocaleString()} <small>cal</small></strong><div className="nutrition-breakdown"><span><strong>{caloriesPerServing}</strong> per serving</span><span><strong>{servings}</strong> servings</span></div><small>Estimate calculated from the ingredient values shown.</small></aside>
+          <aside className="nutrition-card"><p className="eyebrow">USDA-derived estimates</p><h3>Meal total</h3><strong className="meal-calories">{mealCalories.toLocaleString()} <small>cal</small></strong><div className="nutrition-breakdown"><span><strong>{caloriesPerServing}</strong> calories</span><span><strong>{recipe.nutrition.protein} g protein</strong></span><span><strong>{recipe.nutrition.carbohydrates} g carbohydrates</strong></span><span><strong>{recipe.nutrition.fat} g fat</strong></span><span><strong>{servings}</strong> servings</span></div><small>Per-serving estimates from mock reviewed catalog values. Verify labels and substitutions.</small></aside>
         </div>
         <section className="directions"><p className="eyebrow">Nice and easy</p><h2>How it comes together</h2>{recipe.steps.map((step, index) => <div key={step}><span>{index + 1}</span><p>{step}</p></div>)}</section>
         {recipe.safety && <aside className="safety-note"><Check /><div><strong>Good to know</strong><p>{recipe.safety}</p></div></aside>}
