@@ -51,6 +51,7 @@ export function RecipePage({ cartIds, onAdd }: Props) {
           <span><Sparkles /><strong>{recipe.difficulty}</strong><small>Difficulty</small></span>
           <span><b>{recipe.cost}</b><strong>Broad estimate</strong><small>Cost level</small></span>
         </div>
+        <aside className="allergen-note"><strong>Allergen information</strong><p>{recipe.allergens.length ? `Contains: ${recipe.allergens.join(", ")}` : "Reviewed allergen data: no major allergens identified."}</p><small>Always verify manufacturer labels, substitutions, and cross-contact risk.</small></aside>
         <div className="recipe-detail-grid">
           <section>
             <div className="ingredient-title"><div><p className="eyebrow">What you'll need</p><h2>Ingredients</h2><div className="unit-toggle" aria-label="Measurement units"><button className={units === "us" ? "selected" : ""} onClick={() => setUnits("us")}>US</button><button className={units === "metric" ? "selected" : ""} onClick={() => setUnits("metric")}>Metric</button></div></div><div className="servings"><button onClick={() => setServings((current) => Math.max(1, current - 1))} aria-label="Decrease servings"><Minus /></button><span>{servings} servings</span><button onClick={() => setServings((current) => current + 1)} aria-label="Increase servings"><Plus /></button></div></div>

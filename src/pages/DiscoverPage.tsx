@@ -5,16 +5,18 @@ import { RecipeCard } from "../components/RecipeCard";
 import { RecipeArt } from "../components/RecipeArt";
 import { recipes } from "../data/recipes";
 
-type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
+type Props = { cartIds: string[]; allergens?: string[]; onAdd: (recipeId: string) => void };
 const filters = ["Under 30 min", "One pan", "Vegetarian", "High protein"];
 
-export function DiscoverPage({ cartIds, onAdd }: Props) {
+export function DiscoverPage({ cartIds, allergens = [], onAdd }: Props) {
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("");
   const isFiltering = query.trim().length > 0 || activeFilter.length > 0;
+  const eligibleRecipes = useMemo(() => recipes.filter((recipe) => !recipe.allergens.some((allergen) => allergens.includes(allergen))), [allergens]);
+  const hiddenRecipeCount = recipes.length - eligibleRecipes.length;
   const visibleRecipes = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-    return recipes.filter((recipe) => {
+    return eligibleRecipes.filter((recipe) => {
       const searchableText = [recipe.title, recipe.tagline, ...recipe.tags].join(" ").toLowerCase();
       const matchesQuery = !normalizedQuery || searchableText.includes(normalizedQuery);
       const matchesFilter = !activeFilter
@@ -24,7 +26,8 @@ export function DiscoverPage({ cartIds, onAdd }: Props) {
         || (activeFilter === "High protein" && recipe.tags.includes("High protein"));
       return matchesQuery && matchesFilter;
     });
-  }, [activeFilter, query]);
+  }, [activeFilter, eligibleRecipes, query]);
+  const spotlightRecipe = eligibleRecipes.find((recipe) => recipe.tags.includes("Sheet pan")) ?? eligibleRecipes[0];
 
   const clearFilters = () => {
     setQuery("");
@@ -53,6 +56,7 @@ export function DiscoverPage({ cartIds, onAdd }: Props) {
         {filters.map((filter) => <button className={activeFilter === filter ? "selected" : ""} onClick={() => setActiveFilter((current) => current === filter ? "" : filter)} key={filter}>{filter}</button>)}
         {isFiltering && <button className="clear-filter" onClick={clearFilters}>Clear filters</button>}
       </div>
+      {hiddenRecipeCount > 0 && <aside className="dietary-filter-note">{hiddenRecipeCount} recipes hidden for your {allergens.join(", ")} preference. Constraints are never relaxed automatically.</aside>}
 
       {isFiltering ? <section className="content-section search-results" aria-live="polite">
         <div className="section-title"><div><p className="eyebrow accent">Search results</p><h2>{visibleRecipes.length ? `${visibleRecipes.length} recipes found` : "No exact matches"}</h2></div></div>
@@ -64,19 +68,19 @@ export function DiscoverPage({ cartIds, onAdd }: Props) {
           <button>See all <ArrowRight size={16} /></button>
         </div>
         <div className="recipe-grid">
-          {recipes.slice(0, 2).map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} added={cartIds.includes(recipe.id)} onAdd={onAdd} />)}
+          {eligibleRecipes.slice(0, 2).map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} added={cartIds.includes(recipe.id)} onAdd={onAdd} />)}
         </div>
       </section>
 
-      <Link className="spotlight" to={`/recipes/${recipes[2].id}`}>
+      {spotlightRecipe && <Link className="spotlight" to={`/recipes/${spotlightRecipe.id}`}>
         <div><p className="eyebrow">Tonight's pick</p><h2>One tray.<br />Very little cleanup.</h2><span>Cook the honey salmon <ArrowRight size={16} /></span></div>
-        <RecipeArt recipe={recipes[2]} compact />
-      </Link>
+        <RecipeArt recipe={spotlightRecipe} compact />
+      </Link>}
 
       <section className="content-section">
         <div className="section-title"><div><p className="eyebrow mint-text">Fast & friendly</p><h2>Ready before the group chat</h2></div></div>
         <div className="recipe-grid lower-grid">
-          {recipes.slice(2).map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} added={cartIds.includes(recipe.id)} onAdd={onAdd} />)}
+          {eligibleRecipes.slice(2).map((recipe) => <RecipeCard key={recipe.id} recipe={recipe} added={cartIds.includes(recipe.id)} onAdd={onAdd} />)}
         </div>
       </section>
       </>}

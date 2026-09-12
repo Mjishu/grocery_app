@@ -19,6 +19,7 @@ export type Recipe = {
   cost: "$" | "$$" | "$$$";
   difficulty: "Very easy" | "Easy";
   tags: string[];
+  allergens: string[];
   ingredients: Ingredient[];
   steps: string[];
   safety?: string;

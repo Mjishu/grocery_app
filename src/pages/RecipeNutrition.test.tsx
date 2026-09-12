@@ -11,6 +11,7 @@ describe("recipe nutrition and measurements", () => {
 
     expect(screen.getByText("46 g protein")).toBeVisible();
     expect(screen.getByText("USDA-derived estimates")).toBeVisible();
+    expect(screen.getByText("Reviewed allergen data: no major allergens identified.")).toBeVisible();
     expect(screen.getByText("1 lb")).toBeVisible();
 
     await user.click(screen.getByRole("button", { name: "Metric" }));

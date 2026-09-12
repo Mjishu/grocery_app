@@ -155,8 +155,8 @@ export default function App() {
   return (<>
     <Routes>
       <Route element={<AppShell cartCount={cart.length} theme={theme} onThemeChange={() => setTheme((current) => current === "bright" ? "dark" : "bright")} />}>
-        <Route index element={<DiscoverPage cartIds={cartIds} onAdd={addRecipe} />} />
-        <Route path="collections/beginner-dinners" element={<CollectionPage cartIds={cartIds} onAdd={addRecipe} />} />
+        <Route index element={<DiscoverPage cartIds={cartIds} allergens={profile.allergens} onAdd={addRecipe} />} />
+        <Route path="collections/beginner-dinners" element={<CollectionPage cartIds={cartIds} allergens={profile.allergens} onAdd={addRecipe} />} />
         <Route path="recipes/:recipeId" element={<RecipePage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="groceries" element={<GroceryPage cart={cart} checked={checked} pantry={pantry} onCheck={toggleChecked} onServings={changeServings} onRemove={removeRecipe} onPantry={addPantryItem} onRestorePantry={() => setPantry([])} onArchive={archivePlan} />} />
         <Route path="profile" element={<ProfilePage profile={profile} onSave={setProfile} onExport={exportLocalData} onDelete={deleteLocalData} />} />

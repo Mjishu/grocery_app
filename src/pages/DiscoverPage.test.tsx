@@ -30,4 +30,11 @@ describe("recipe discovery", () => {
     await user.click(screen.getByRole("button", { name: "Clear filters" }));
     expect(screen.getByRole("heading", { name: "Honey salmon tray" })).toBeVisible();
   });
+
+  it("enforces known allergen exclusions without silently relaxing them", () => {
+    render(<MemoryRouter><DiscoverPage cartIds={[]} allergens={["Milk"]} onAdd={vi.fn()} /></MemoryRouter>);
+
+    expect(screen.queryByRole("heading", { name: "Bright lemon pasta" })).not.toBeInTheDocument();
+    expect(screen.getByText(/recipes hidden for your Milk preference/)).toBeVisible();
+  });
 });

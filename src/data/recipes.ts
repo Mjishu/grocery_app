@@ -3,6 +3,7 @@ import type { Recipe } from "../types";
 export const recipes: Recipe[] = [
   {
     id: "taco-bowls", title: "Smoky taco bowls", tagline: "Big flavor, one pan, zero stress.", image: "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=80", time: 25, cost: "$$", difficulty: "Easy", tags: ["One pan", "High protein"],
+    allergens: [],
     ingredients: [
       { id: "chicken", name: "Chicken breast", amount: "1 lb", metricAmount: "454 g", category: "Protein", calories: 748 },
       { id: "rice", name: "Long-grain rice", amount: "1 cup", metricAmount: "185 g", category: "Pantry", calories: 675 },
@@ -16,6 +17,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "lemon-pasta", title: "Bright lemon pasta", tagline: "Silky, sunny, and ready in twenty.", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=1200&q=80", time: 20, cost: "$", difficulty: "Very easy", tags: ["Vegetarian", "5 ingredients"],
+    allergens: ["Milk", "Wheat"],
     ingredients: [
       { id: "pasta", name: "Spaghetti", amount: "12 oz", metricAmount: "340 g", category: "Pantry", calories: 1260 },
       { id: "lemon", name: "Lemons", amount: "2", metricAmount: "2", category: "Produce", calories: 34 },
@@ -28,6 +30,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "salmon-tray", title: "Honey salmon tray", tagline: "Dinner that basically cooks itself.", image: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?auto=format&fit=crop&w=1200&q=80", imagePosition: "center 58%", time: 30, cost: "$$$", difficulty: "Easy", tags: ["Sheet pan", "No fuss"],
+    allergens: ["Fish", "Soy"],
     ingredients: [
       { id: "salmon", name: "Salmon fillets", amount: "4", metricAmount: "4", category: "Protein", calories: 936 },
       { id: "broccoli", name: "Broccoli florets", amount: "12 oz", metricAmount: "340 g", category: "Produce", calories: 120 },
@@ -40,6 +43,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "breakfast-pitas", title: "Crispy breakfast pitas", tagline: "Breakfast with main-character energy.", image: "https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1200&q=80", time: 15, cost: "$", difficulty: "Very easy", tags: ["Breakfast", "Quick"],
+    allergens: ["Egg", "Milk", "Wheat"],
     ingredients: [
       { id: "eggs", name: "Eggs", amount: "4", metricAmount: "4", category: "Protein", calories: 288 },
       { id: "pita", name: "Pita bread", amount: "2", metricAmount: "2", category: "Pantry", calories: 330 },
@@ -52,6 +56,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "chickpea-curry", title: "Creamy chickpea curry", tagline: "A cozy pantry dinner with a bright finish.", image: "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=1200&q=80", time: 25, cost: "$", difficulty: "Very easy", tags: ["Vegetarian", "One pan"],
+    allergens: [],
     ingredients: [
       { id: "chickpeas", name: "Chickpeas", amount: "2 cans", metricAmount: "2 × 425 g cans", category: "Pantry", calories: 700 },
       { id: "coconut-milk", name: "Coconut milk", amount: "1 can", metricAmount: "400 ml", category: "Pantry", calories: 600 },
@@ -63,6 +68,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "bean-quesadillas", title: "Crispy bean quesadillas", tagline: "Golden edges, melty middles, dinner handled.", image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?auto=format&fit=crop&w=1200&q=80", time: 20, cost: "$", difficulty: "Very easy", tags: ["Vegetarian", "Quick"],
+    allergens: ["Milk", "Wheat"],
     ingredients: [
       { id: "tortillas", name: "Flour tortillas", amount: "8", metricAmount: "8", category: "Pantry", calories: 1040 },
       { id: "beans", name: "Black beans", amount: "1 can", metricAmount: "425 g can", category: "Pantry", calories: 350 },
@@ -74,6 +80,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "pesto-gnocchi", title: "Skillet pesto gnocchi", tagline: "Pillowy, herby, and happily low effort.", image: "https://images.unsplash.com/photo-1476124369491-e7addf5db371?auto=format&fit=crop&w=1200&q=80", time: 18, cost: "$$", difficulty: "Very easy", tags: ["Vegetarian", "One pan"],
+    allergens: ["Milk", "Tree nuts", "Wheat"],
     ingredients: [
       { id: "gnocchi", name: "Shelf-stable gnocchi", amount: "1 lb", metricAmount: "454 g", category: "Pantry", calories: 900 },
       { id: "pesto", name: "Basil pesto", amount: "1/3 cup", metricAmount: "80 ml", category: "Pantry", calories: 520 },
@@ -85,6 +92,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "chicken-veg-tray", title: "Paprika chicken tray", tagline: "Colorful vegetables and crisp-edged chicken.", image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=1200&q=80", time: 35, cost: "$$", difficulty: "Easy", tags: ["Sheet pan", "High protein"],
+    allergens: [],
     ingredients: [
       { id: "chicken", name: "Chicken breast", amount: "1 lb", metricAmount: "454 g", category: "Protein", calories: 748 },
       { id: "pepper", name: "Bell peppers", amount: "3", metricAmount: "3", category: "Produce", calories: 111 },
@@ -97,6 +105,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "overnight-oats", title: "Berry overnight oats", tagline: "Tomorrow morning just got much easier.", image: "https://images.unsplash.com/photo-1517673132405-a56a62b18caf?auto=format&fit=crop&w=1200&q=80", time: 10, cost: "$", difficulty: "Very easy", tags: ["Breakfast", "No cook"],
+    allergens: ["Milk"],
     ingredients: [
       { id: "oats", name: "Rolled oats", amount: "2 cups", metricAmount: "180 g", category: "Pantry", calories: 700 },
       { id: "milk", name: "Milk", amount: "2 cups", metricAmount: "475 ml", category: "Dairy", calories: 244 },
@@ -109,6 +118,7 @@ export const recipes: Recipe[] = [
   },
   {
     id: "tuna-melts", title: "Open-face tuna melts", tagline: "Crunchy, savory, and ready for lunch.", image: "https://images.unsplash.com/photo-1550507992-eb63ffee0847?auto=format&fit=crop&w=1200&q=80", time: 15, cost: "$", difficulty: "Very easy", tags: ["Lunch", "High protein"],
+    allergens: ["Fish", "Milk", "Wheat"],
     ingredients: [
       { id: "tuna", name: "Canned tuna", amount: "2 cans", metricAmount: "2 × 142 g cans", category: "Protein", calories: 300 },
       { id: "bread", name: "Whole-grain bread", amount: "4 slices", metricAmount: "4 slices", category: "Pantry", calories: 360 },

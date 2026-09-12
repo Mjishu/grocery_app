@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { RecipeCard } from "../components/RecipeCard";
 import { recipes } from "../data/recipes";
 
-type Props = { cartIds: string[]; onAdd: (recipeId: string) => void };
+type Props = { cartIds: string[]; allergens?: string[]; onAdd: (recipeId: string) => void };
 
-export function CollectionPage({ cartIds, onAdd }: Props) {
-  const collection = recipes.filter((recipe) => recipe.time < 30 && !recipe.tags.includes("Breakfast"));
+export function CollectionPage({ cartIds, allergens = [], onAdd }: Props) {
+  const collection = recipes.filter((recipe) => recipe.time < 30 && !recipe.tags.includes("Breakfast") && !recipe.allergens.some((allergen) => allergens.includes(allergen)));
 
   return (
     <main className="wrap collection-page">
