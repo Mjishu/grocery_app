@@ -11,7 +11,7 @@ export default function App() {
   const [theme, setTheme] = useState<"bright" | "dark">(() => {
     const savedTheme = localStorage.getItem("grocery-theme");
     if (savedTheme === "bright" || savedTheme === "dark") return savedTheme;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "bright";
+    return "dark";
   });
   const [cart, setCart] = useState<CartItem[]>([]);
   const [checked, setChecked] = useState<string[]>([]);
