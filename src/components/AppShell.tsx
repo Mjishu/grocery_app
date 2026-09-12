@@ -1,4 +1,4 @@
-import { Compass, ListChecks, Moon, Search, ShoppingBasket, Sun, UserRound } from "lucide-react";
+import { Compass, ListChecks, LogIn, Moon, Search, ShoppingBasket, Sun, UserRound } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 
 type Props = { cartCount: number; theme: "bright" | "dark"; onThemeChange: () => void };
@@ -14,6 +14,7 @@ export function AppShell({ cartCount, theme, onThemeChange }: Props) {
           <a href="#collections">Collections</a>
         </nav>
         <div className="topbar-actions">
+          <Link className="signin-link" to="/signin"><LogIn /> Sign in</Link>
           <button className="theme-toggle" onClick={onThemeChange} aria-label={`Switch to ${theme === "bright" ? "dark" : "bright"} mode`}>
             {theme === "bright" ? <Moon /> : <Sun />}
           </button>

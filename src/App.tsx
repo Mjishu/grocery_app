@@ -8,6 +8,7 @@ import { GroceryPage } from "./pages/GroceryPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { RecipePage } from "./pages/RecipePage";
 import { ReportPage } from "./pages/ReportPage";
+import { SignInPage } from "./pages/SignInPage";
 import type { CartItem, UserProfile } from "./types";
 
 function readStoredCart(): CartItem[] {
@@ -148,6 +149,7 @@ export default function App() {
         <Route path="groceries" element={<GroceryPage cart={cart} checked={checked} pantry={pantry} onCheck={toggleChecked} onServings={changeServings} onRemove={removeRecipe} onPantry={addPantryItem} onRestorePantry={() => setPantry([])} />} />
         <Route path="profile" element={<ProfilePage profile={profile} onSave={setProfile} onExport={exportLocalData} onDelete={deleteLocalData} />} />
         <Route path="report/:recipeId" element={<ReportPage />} />
+        <Route path="signin" element={<SignInPage />} />
       </Route>
       <Route path="cook/:recipeId" element={<CookPage />} />
     </Routes>
