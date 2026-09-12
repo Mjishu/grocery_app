@@ -15,14 +15,16 @@ type Props = {
   onRemove: (recipeId: string) => void;
   onPantry: (ingredientId: string) => void;
   onRestorePantry: () => void;
+  onArchive: () => void;
 };
 
 const categories: Category[] = ["Produce", "Protein", "Dairy", "Pantry"];
 
-export function GroceryPage({ cart, checked, pantry, onCheck, onServings, onRemove, onPantry, onRestorePantry }: Props) {
+export function GroceryPage({ cart, checked, pantry, onCheck, onServings, onRemove, onPantry, onRestorePantry, onArchive }: Props) {
   const [removed, setRemoved] = useState<string[]>([]);
   const [shareOpen, setShareOpen] = useState(false);
   const [shareStatus, setShareStatus] = useState("");
+  const [confirmArchive, setConfirmArchive] = useState(false);
   const selectedRecipes = cart.map((item) => ({ ...item, recipe: recipes.find((recipe) => recipe.id === item.recipeId)! }));
   const groceries = buildGroceryList(cart, recipes);
   const visibleGroceries = groceries.filter((item) => !pantry.includes(item.ingredientId) && !removed.includes(item.key));
@@ -61,8 +63,9 @@ export function GroceryPage({ cart, checked, pantry, onCheck, onServings, onRemo
               return <section className="grocery-group" key={category}><h2>{category}<span>{items.length}</span></h2>{items.map((item) => <div className="grocery-row" key={item.key}><button className={`grocery-check ${checked.includes(item.key) ? "checked" : ""}`} onClick={() => onCheck(item.key)} aria-label={`Mark ${item.name} purchased`}><i>{checked.includes(item.key) && <Check />}</i><span><strong>{item.name}</strong><small>For {item.sources.join(", ")}</small></span><b>{item.amount}<small>{item.calories.toLocaleString()} cal</small></b></button><div className="pantry-actions"><button onClick={() => setRemoved((current) => [...current, item.key])} aria-label={`Remove ${item.name} this time`}>This time</button><button onClick={() => onPantry(item.ingredientId)} aria-label={`I usually have ${item.name}`}>Usually have</button></div></div>)}</section>;
             })}
           </section>
-          <aside className="plan-card"><div className="cart-calorie-total"><span>Cart total</span><strong>{cartCalories.toLocaleString()} cal</strong></div><p className="eyebrow">In your plan</p>{selectedRecipes.map(({ recipe, servings }) => <article key={recipe.id}><RecipeArt recipe={recipe} compact /><div><strong>{recipe.title}</strong><small>{servings} servings · {getMealCalories(recipe, servings).toLocaleString()} cal</small><span><button onClick={() => onServings(recipe.id, -1)}><Minus /></button><button onClick={() => onServings(recipe.id, 1)}><Plus /></button><button className="remove" onClick={() => onRemove(recipe.id)}><Trash2 /></button></span></div></article>)}<button className="retailer-button">Send to grocery partner</button><small>Product review and checkout happen with the retailer.</small></aside>
+          <aside className="plan-card"><div className="cart-calorie-total"><span>Cart total</span><strong>{cartCalories.toLocaleString()} cal</strong></div><p className="eyebrow">In your plan</p>{selectedRecipes.map(({ recipe, servings }) => <article key={recipe.id}><RecipeArt recipe={recipe} compact /><div><strong>{recipe.title}</strong><small>{servings} servings · {getMealCalories(recipe, servings).toLocaleString()} cal</small><span><button onClick={() => onServings(recipe.id, -1)}><Minus /></button><button onClick={() => onServings(recipe.id, 1)}><Plus /></button><button className="remove" onClick={() => onRemove(recipe.id)}><Trash2 /></button></span></div></article>)}<button className="retailer-button">Send to grocery partner</button><small>Product review and checkout happen with the retailer.</small><button className="archive-plan" onClick={() => setConfirmArchive(true)}><Trash2 /> Archive and clear plan</button></aside>
         </div>}
+      {confirmArchive && <div className="modal-backdrop"><section className="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="archive-title"><h2 id="archive-title">Clear this grocery plan?</h2><p>We’ll keep a local archive, then start you with an empty plan.</p><div><button onClick={() => setConfirmArchive(false)}>Keep plan</button><button className="danger" onClick={() => { onArchive(); setConfirmArchive(false); }}>Archive and clear</button></div></section></div>}
     </main>
   );
 }

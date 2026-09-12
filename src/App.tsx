@@ -98,12 +98,12 @@ export default function App() {
       setPendingRecipeId(recipeId);
       return;
     }
-    setCart((current) => current.some((item) => item.recipeId === recipeId) ? current : [...current, { recipeId, servings: 4 }]);
+    setCart((current) => current.some((item) => item.recipeId === recipeId) ? current : [...current, { recipeId, servings: profile.servings }]);
   };
 
   const confirmDietaryProfile = (allergens: string[]) => {
     setProfile((current) => ({ ...current, dietaryAcknowledged: true, allergens }));
-    if (pendingRecipeId) setCart((current) => current.some((item) => item.recipeId === pendingRecipeId) ? current : [...current, { recipeId: pendingRecipeId, servings: 4 }]);
+    if (pendingRecipeId) setCart((current) => current.some((item) => item.recipeId === pendingRecipeId) ? current : [...current, { recipeId: pendingRecipeId, servings: profile.servings }]);
     setPendingRecipeId(null);
   };
 
@@ -121,6 +121,14 @@ export default function App() {
 
   const addPantryItem = (ingredientId: string) => {
     setPantry((current) => current.includes(ingredientId) ? current : [...current, ingredientId]);
+  };
+
+  const archivePlan = () => {
+    const storedArchive = JSON.parse(localStorage.getItem("grocery-cart-archive") ?? "[]");
+    const archive = Array.isArray(storedArchive) ? storedArchive : [];
+    localStorage.setItem("grocery-cart-archive", JSON.stringify([...archive, { archivedAt: new Date().toISOString(), items: cart }]));
+    setCart([]);
+    setChecked([]);
   };
 
   const exportLocalData = () => {
@@ -148,7 +156,7 @@ export default function App() {
         <Route index element={<DiscoverPage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="collections/beginner-dinners" element={<CollectionPage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="recipes/:recipeId" element={<RecipePage cartIds={cartIds} onAdd={addRecipe} />} />
-        <Route path="groceries" element={<GroceryPage cart={cart} checked={checked} pantry={pantry} onCheck={toggleChecked} onServings={changeServings} onRemove={removeRecipe} onPantry={addPantryItem} onRestorePantry={() => setPantry([])} />} />
+        <Route path="groceries" element={<GroceryPage cart={cart} checked={checked} pantry={pantry} onCheck={toggleChecked} onServings={changeServings} onRemove={removeRecipe} onPantry={addPantryItem} onRestorePantry={() => setPantry([])} onArchive={archivePlan} />} />
         <Route path="profile" element={<ProfilePage profile={profile} onSave={setProfile} onExport={exportLocalData} onDelete={deleteLocalData} />} />
         <Route path="report/:recipeId" element={<ReportPage />} />
         <Route path="signin" element={<SignInPage />} />

@@ -64,6 +64,29 @@ describe("active grocery plan", () => {
     expect(localStorage.getItem("grocery-pantry")).toContain("avocado");
     expect(screen.getByText("1 pantry item hidden")).toBeVisible();
   });
+
+  it("uses the saved default serving count for newly added recipes", async () => {
+    localStorage.setItem("grocery-profile", JSON.stringify({ dietaryAcknowledged: true, allergens: [], servings: 2 }));
+    const user = userEvent.setup();
+    renderApp();
+
+    await user.click(screen.getByRole("button", { name: "Add Smoky taco bowls" }));
+
+    expect(localStorage.getItem("grocery-cart")).toContain('"servings":2');
+  });
+
+  it("archives and clears the active plan only after confirmation", async () => {
+    localStorage.setItem("grocery-cart", JSON.stringify([{ recipeId: "taco-bowls", servings: 4 }]));
+    const user = userEvent.setup();
+    renderApp("/groceries");
+
+    await user.click(screen.getByRole("button", { name: "Archive and clear plan" }));
+    expect(screen.getByRole("dialog", { name: "Clear this grocery plan?" })).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Archive and clear" }));
+
+    expect(screen.getByText("Your basket is ready for ideas.")).toBeVisible();
+    expect(localStorage.getItem("grocery-cart-archive")).toContain("taco-bowls");
+  });
 });
 
 describe("dietary safety gate", () => {
