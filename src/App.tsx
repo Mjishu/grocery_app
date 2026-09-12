@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/AppShell";
 import { DietaryGate } from "./components/DietaryGate";
 import { CookPage } from "./pages/CookPage";
+import { CollectionPage } from "./pages/CollectionPage";
 import { DiscoverPage } from "./pages/DiscoverPage";
 import { GroceryPage } from "./pages/GroceryPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -145,6 +146,7 @@ export default function App() {
     <Routes>
       <Route element={<AppShell cartCount={cart.length} theme={theme} onThemeChange={() => setTheme((current) => current === "bright" ? "dark" : "bright")} />}>
         <Route index element={<DiscoverPage cartIds={cartIds} onAdd={addRecipe} />} />
+        <Route path="collections/beginner-dinners" element={<CollectionPage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="recipes/:recipeId" element={<RecipePage cartIds={cartIds} onAdd={addRecipe} />} />
         <Route path="groceries" element={<GroceryPage cart={cart} checked={checked} pantry={pantry} onCheck={toggleChecked} onServings={changeServings} onRemove={removeRecipe} onPantry={addPantryItem} onRestorePantry={() => setPantry([])} />} />
         <Route path="profile" element={<ProfilePage profile={profile} onSave={setProfile} onExport={exportLocalData} onDelete={deleteLocalData} />} />

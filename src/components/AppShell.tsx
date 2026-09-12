@@ -11,7 +11,7 @@ export function AppShell({ cartCount, theme, onThemeChange }: Props) {
         <nav className="desktop-nav" aria-label="Main navigation">
           <NavLink to="/">Discover</NavLink>
           <a href="#search">Search</a>
-          <a href="#collections">Collections</a>
+          <NavLink to="/collections/beginner-dinners">Collections</NavLink>
         </nav>
         <div className="topbar-actions">
           <Link className="signin-link" to="/signin"><LogIn /> Sign in</Link>
