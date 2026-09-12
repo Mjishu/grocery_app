@@ -152,4 +152,22 @@ describe("grocery sharing", () => {
     expect(writeText.mock.calls[0][0]).toContain("Avocado — 1");
     expect(screen.getByText("List copied")).toBeVisible();
   });
+
+  it("keeps the generic list usable while store lookup awaits the backend", async () => {
+    const user = userEvent.setup();
+    renderApp("/groceries");
+
+    await user.click(screen.getByRole("button", { name: "Choose a store" }));
+    await user.type(screen.getByLabelText("ZIP code"), "123");
+    await user.click(screen.getByRole("button", { name: "Check ZIP" }));
+    expect(screen.getByText("Enter a 5-digit ZIP code.")).toBeVisible();
+
+    await user.clear(screen.getByLabelText("ZIP code"));
+    await user.type(screen.getByLabelText("ZIP code"), "10001");
+    await user.click(screen.getByRole("button", { name: "Check ZIP" }));
+    await user.click(screen.getByRole("button", { name: "Save ZIP" }));
+
+    expect(localStorage.getItem("grocery-store-zip")).toBe("10001");
+    expect(screen.getByText("Your categorized list still works while retailer availability is being connected.")).toBeVisible();
+  });
 });
